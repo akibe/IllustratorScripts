@@ -1,11 +1,5 @@
 #target "illustrator"
 
-var thisApp = BridgeTalk.appName;
-if(thisApp != "illustrator"){
-    alert('Run only illustrator');
-    exit();
-}
-
 var scaleSettings  = {
     '25%': 25.0,
     '50%': 50.0,
@@ -19,7 +13,7 @@ var progress = {
     done: 0
 }
 
-var title = 'Export Inner Most Layers';
+var title = 'Export Innermost Layers';
 var currentDir = (new File($.fileName)).parent;
 var doc = app.activeDocument;
 var workEnable = false;
@@ -48,7 +42,7 @@ var hideLayers = function(layers) {
     }
 }
 
-var exportInnerMostLayers = function (layers, name) {
+var exportInnermostLayers = function (layers, name) {
     progress.total += layers.length;
     for (var i = 0; i < layers.length; i++) {
         if (!workEnable) return;
@@ -61,7 +55,7 @@ var exportInnerMostLayers = function (layers, name) {
 		}
         var n = (name ? name + '_' : '') + layer.name;
         if(layer.layers.length) {
-            exportInnerMostLayers(layer.layers, n);
+            exportInnermostLayers(layer.layers, n);
         } else if (layer.pageItems.length) {
             dlg.progLabel.text = n + ' (' + progress.done + '/' + progress.total + ')';
             dlg.update();
@@ -144,7 +138,7 @@ var main = function() {
     
     makeDialog(function() {
         hideLayers(parts);
-        exportInnerMostLayers(parts, '');
+        exportInnermostLayers(parts, '');
         dlg.close();
     });
 }
