@@ -34,11 +34,12 @@ var savePng24 = function (fileName) {
     doc.exportFile(destFile, ExportType.PNG24, options);
 }
 
-var hideLayers = function(layers) {
+var resetLayers = function(layers) {
     for(var i = 0; i < layers.length; i++) {
         layer = layers[i];
-	    layer.visible = false;
-	    layer.layers.length && hideLayers(layer.layers);
+        layer.visible = false;
+        layer.locked = false;
+	    layer.layers.length && resetLayers(layer.layers);
     }
 }
 
@@ -52,8 +53,9 @@ var exportInnermostLayers = function (layers, name) {
         layer.visible = true;
         if(layer.name.match( /^\-/ )){
             continue;
-		}
-        var n = (name ? name + '_' : '') + layer.name;
+        }
+        var lname = layer.name = layer.name.replace(/\s+/g, '');  // replace(/のコピー\s?\d+$/, '');
+        var n = (name ? name + '_' : '') + lname;
         if(layer.layers.length) {
             exportInnermostLayers(layer.layers, n);
         } else if (layer.pageItems.length) {
@@ -137,7 +139,7 @@ var main = function() {
     var parts = doc.layers;
     
     makeDialog(function() {
-        hideLayers(parts);
+        resetLayers(parts);
         exportInnermostLayers(parts, '');
         dlg.close();
     });
